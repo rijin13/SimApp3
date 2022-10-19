@@ -786,7 +786,7 @@ function App() {
           <div
             key={"BT" + i + j}
             ref={tileref[i][j]}
-            id={j + "T" + i} className='Tile' style={{ display: "flex", maxWidth: "5vw", height: "10vh", zIndex: "0", background: 'cadetblue', borderRadius: "5px" }}
+            id={j + "T" + i} className='Tile' style={{ display: "flex",minWidth: "6rem", maxWidth: "6rem", height: "6rem", zIndex: "0", background: 'cadetblue', borderRadius: "5px" }}
             onClick={pressTile}>
 
           </div>
@@ -816,7 +816,7 @@ function App() {
             id={"B" + i}
             onClick={pressButton}
             ref={ButtonRef}
-            variant='text' style={{ alignSelf: 'center', maxWidth: '5vw', maxHeight: '10vh', minHeight: '10vh', minWidth: '5vw', minHeight: '10vh', background: Color == W ? B : W, outline: ColorOutline }}
+            variant='text' style={{ alignSelf: 'center', maxWidth: '6rem', maxHeight: '6rem', minHeight: '6rem', minWidth: '6rem', background: Color == W ? B : W, outline: ColorOutline }}
           ><div style={{ fontSize: '4rem', color: Color }}>{Letter}</div></Button>
 
         </div>
@@ -935,7 +935,7 @@ function App() {
       <Button
         onClick={publish}
         variant='text' style={{ maxWidth: '10vw', maxHeight: '10vh', minHeight: '10vh', minWidth: '10vw', border: '1px solid lightgrey', background: "lightblue" }}
-      >MOVE THE CUBE!</Button>
+      >MOVE THE CUBE!?</Button>
 
       <h1 style={{ color: "black", fontSize: "1.5rem", display: "inline" }}>  {loopVariable ? 'Press Destination Position' : 'Press source position'}</h1>
 
