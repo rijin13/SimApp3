@@ -145,8 +145,8 @@ function App() {
   function init_connection() {
 
     var ros = new window.ROSLIB.Ros({
-      // url: 'ws://141.44.50.126:9090'
-      url: 'ws://localhost:9090'
+      url: 'ws://141.44.50.126:9090'
+      // url: 'ws://localhost:9090'
     });
 
     ros.on('connection', function () {
@@ -162,8 +162,8 @@ function App() {
 
       setTimeout(() => {
         try {
-          // ros.connect(`ws://141.44.50.126:9090`);
-          ros.connect(`ws://localhost:9090`);                                   
+          ros.connect(`ws://141.44.50.126:9090`);
+          // ros.connect(`ws://localhost:9090`);                                   
 
         }
         catch (error) {
@@ -728,8 +728,8 @@ function App() {
     //console.log("gotit " + sor_letter + " " + sor_color + " " + des_letter + " " + des_color);
 
     var ros = new window.ROSLIB.Ros({
-      // url: 'ws://141.44.50.126:9090'
-      url: 'ws://localhost:9090'
+      url: 'ws://141.44.50.126:9090'
+      // url: 'ws://localhost:9090'
     });
 
     var publisher = new window.ROSLIB.Topic({
