@@ -12,6 +12,9 @@ function App() {
 
   {/* Screen freeze test-end */ }
 
+  var mainWidth =5;
+  var mainHeight =9;
+
   //Button
   var B1 = useRef(null);
   var B2 = useRef(null);
@@ -142,8 +145,8 @@ function App() {
   function init_connection() {
 
     var ros = new window.ROSLIB.Ros({
-      url: 'ws://141.44.50.126:9090'
-      // url: 'ws://localhost:9090'
+      // url: 'ws://141.44.50.126:9090'
+      url: 'ws://localhost:9090'
     });
 
     ros.on('connection', function () {
@@ -159,8 +162,8 @@ function App() {
 
       setTimeout(() => {
         try {
-          ros.connect(`ws://141.44.50.126:9090`);
-          // ros.connect(`ws://localhost:9090`);                                   
+          // ros.connect(`ws://141.44.50.126:9090`);
+          ros.connect(`ws://localhost:9090`);                                   
 
         }
         catch (error) {
@@ -220,7 +223,7 @@ function App() {
           tempVariableX[i + 1] = `${gripCount}vw`;
           setXval(tempVariableX);
 
-          tempVariableY[i + 1] = "80vh";
+          tempVariableY[i + 1] = "72vh";
           setYval(tempVariableY);
 
           var color = message.CubeStatus[i].color;
@@ -253,7 +256,7 @@ function App() {
           tempVariableX[i + 1] = `${handCount}vw`;
           setXval(tempVariableX);
 
-          tempVariableY[i + 1] = "70vh";
+          tempVariableY[i + 1] = "63vh";
           setYval(tempVariableY);
 
           var color = message.CubeStatus[i].color;
@@ -298,8 +301,8 @@ function App() {
           tempVariableZN[i + 1] = z;
           setZvalN(tempVariableZN);
 
-          var tempx = (x - 1) * 5;
-          var tempy = (y - 1) * 10;
+          var tempx = (x - 1) * mainWidth;
+          var tempy = (y - 1) * mainHeight;
           var tempz = z * 10;
 
           tempVariableX[i + 1] = `${tempx}vw`;
@@ -357,8 +360,8 @@ function App() {
         tyN(hy);
         tzN(hz);
 
-        var htempx = (hx - 1) * 5;
-        var htempy = (hy - 1) * 10;
+        var htempx = (hx - 1) * mainWidth+(mainWidth/4);
+        var htempy = (hy - 1) * mainHeight+(mainHeight/4);
         var htempz = (hz * 10) + 5;
 
         var htempx2 = `${htempx}vw`
@@ -529,7 +532,7 @@ function App() {
 
     var x = xvalN[output_d];
     var y = yvalN[output_d];
-    var z = zvalN[output_d]+1;
+    var z = zvalN[output_d];
 
     if (loopVariable == false) {
       setVariable(true);
@@ -545,7 +548,7 @@ function App() {
 
       setDestinationx(x);
       setDestinationy(y);
-      setDestinationz(z);
+      setDestinationz(z+1);
       setDestinationt(tempID);
       setVariable(false);
 
@@ -725,8 +728,8 @@ function App() {
     //console.log("gotit " + sor_letter + " " + sor_color + " " + des_letter + " " + des_color);
 
     var ros = new window.ROSLIB.Ros({
-      url: 'ws://141.44.50.126:9090'
-      // url: 'ws://localhost:9090'
+      // url: 'ws://141.44.50.126:9090'
+      url: 'ws://localhost:9090'
     });
 
     var publisher = new window.ROSLIB.Topic({
@@ -786,7 +789,7 @@ function App() {
           <div
             key={"BT" + i + j}
             ref={tileref[i][j]}
-            id={j + "T" + i} className='Tile' style={{ display: "flex",minWidth: "6rem", maxWidth: "6rem", height: "6rem", zIndex: "0", background: 'cadetblue', borderRadius: "5px" }}
+            id={j + "T" + i} className='Tile' style={{ display: "flex",minWidth: mainWidth+"vw", maxWidth: mainWidth+"vw", minHeight: mainHeight+"vh",maxHeight: mainHeight+"vh", zIndex: "0", background: 'cadetblue', borderRadius: "5px" }}
             onClick={pressTile}>
 
           </div>
@@ -816,8 +819,8 @@ function App() {
             id={"B" + i}
             onClick={pressButton}
             ref={ButtonRef}
-            variant='text' style={{ alignSelf: 'center', maxWidth: '6rem', maxHeight: '6rem', minHeight: '6rem', minWidth: '6rem', background: Color == W ? B : W, outline: ColorOutline }}
-          ><div style={{ fontSize: '4rem', color: Color }}>{Letter}</div></Button>
+            variant='text' style={{ alignSelf: 'center', maxWidth: mainWidth+"vw", maxHeight: mainHeight+"vh", minHeight: mainHeight+"vh", minWidth: mainWidth+"vw", background: Color == W ? B : W, outline: ColorOutline }}
+          ><div style={{ fontSize: '3rem', color: Color }}>{Letter}</div></Button>
 
         </div>
       )
@@ -844,7 +847,7 @@ function App() {
             id={"H" + i}
             ref={HalfRef}
             onClick={pressHalfPosition}
-            variant='text' style={{ maxWidth: '5vw', maxHeight: '10vh', minHeight: '10vh', minWidth: '5vw', border: '1px solid lightgrey' }}
+            variant='text' style={{ maxWidth: (mainWidth/2)+"vw", maxHeight: (mainHeight/2)+"vh", minHeight: (mainHeight/2)+"vh", minWidth: (mainWidth/2)+"vw", border: '1px solid lightgrey' }}
           >HP{i}</Button>
         </div>
 
@@ -914,8 +917,8 @@ function App() {
           id="hand"
           onClick={pressHandOrGripper}
           ref={handRef}
-          variant='text' style={{ maxWidth: '5vw', maxHeight: '10vh', minHeight: '10vh', minWidth: '5vw', outline: '1px solid lightgrey' }}
-          startIcon={<Avatar sx={{ maxWidth: '100%', width: '100%', height: '100%', borderRadius: 0, marginLeft: '0%' }} src={"./hand.png"} />}></Button>
+          variant='text' style={{ maxWidth: mainWidth+"vw", maxHeight: mainHeight+"vh", minHeight: mainHeight+"vh", minWidth: mainWidth+"vw", outline: '1px solid lightgrey' }}
+          startIcon={<Avatar sx={{ maxWidth: '100%', width: '80%', height: '80%', borderRadius: 0, marginLeft: '0%' }} src={"./hand.png"} />}></Button>
       </div>
 
       <div className='BottomRow'>
@@ -923,8 +926,8 @@ function App() {
           id="gripper"
           onClick={pressHandOrGripper}
           ref={gripperRef}
-          variant='text' style={{ maxWidth: '5vw', maxHeight: '10vh', minHeight: '10vh', minWidth: '5vw', outline: '1px solid lightgrey' }}
-          startIcon={<Avatar sx={{ maxWidth: '100%', width: '100%', height: '100%', borderRadius: 0, marginLeft: '0%' }} src={"./gripper.png"} />}></Button>
+          variant='text' style={{ maxWidth: mainWidth+"vw", maxHeight: mainHeight+"vh", minHeight: mainHeight+"vh", minWidth: mainWidth+"vw", outline: '1px solid lightgrey' }}
+          startIcon={<Avatar sx={{ maxWidth: '100%', width: '80%', height: '80%', borderRadius: 0, marginLeft: '0%' }} src={"./gripper.png"} />}></Button>
       </div>
 
       {/* Hand and gripper */}
@@ -932,12 +935,14 @@ function App() {
 
       {/* Move button and Status tab */}
 
+      <div className="moveButtonAndStatusTab">
       <Button
         onClick={publish}
-        variant='text' style={{ maxWidth: '10vw', maxHeight: '10vh', minHeight: '10vh', minWidth: '10vw', border: '1px solid lightgrey', background: "lightblue" }}
-      >MOVE THE CUBE!?</Button>
+        variant='text' style={{ maxWidth: (mainWidth*2)+"vw", maxHeight:  mainHeight+"vh", minHeight:  mainHeight+"vh", minWidth: (mainWidth*2)+"vw", border: '1px solid lightgrey', background: "lightblue" , fontSize: "0.8vw"}}
+      >MOVE THE CUBE!!</Button>
 
       <h1 style={{ color: "black", fontSize: "1.5rem", display: "inline" }}>  {loopVariable ? 'Press Destination Position' : 'Press source position'}</h1>
+      </div>
 
       {/* Move button and Status tab */}
 
