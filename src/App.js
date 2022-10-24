@@ -12,8 +12,9 @@ function App() {
 
   {/* Screen freeze test-end */ }
 
-  var mainWidth =5;
-  var mainHeight =9;
+  var mainWidth = 5;
+  var mainHeight = 8.5;
+  var numberOfRows = 7;
 
   //Button
   var B1 = useRef(null);
@@ -30,22 +31,34 @@ function App() {
   var handRef = useRef(null);
   var gripperRef = useRef(null);
 
+  var W = "white";
+  var B = "black";
+
   var [loopVariable, setVariable] = useState(false);
 
-  //const [xval, setXval] = useState([""]);
-
-  const [xval, setXval] = useState(new Array(11).fill(""));
-  const [yval, setYval] = useState(new Array(11).fill(""));
+  //For storing x,y,z values of the cubes after conversion
+  const [xval, setXval] = useState(new Array(11).fill("94.5vw"));
+  const [yval, setYval] = useState(new Array(11).fill("91vh"));
   const [zval, setZval] = useState(new Array(11).fill("1"));
 
+  //For storing x,y,z values of the cubes(N-normal)
   const [xvalN, setXvalN] = useState(new Array(11).fill(0));
   const [yvalN, setYvalN] = useState(new Array(11).fill(0));
   const [zvalN, setZvalN] = useState(new Array(11).fill(1));
 
-  // var [btn1xN, setbtn1xN] = useState("");
-  //var [btn1yN, setbtn1yN] = useState("");
-  //var [btn1zN, setbtn1zN] = useState("1");
 
+  let tempVariableX, tempVariableY, tempVariableZ;
+  let tempVariableXN, tempVariableYN, tempVariableZN;
+
+  tempVariableX = [...xval];
+  tempVariableY = [...yval];
+  tempVariableZ = [...zval];
+
+  tempVariableXN = [...xvalN];
+  tempVariableYN = [...yvalN];
+  tempVariableZN = [...zvalN];
+
+  //For storing Letter and Alphabet of the cubes together
   var [btn1N, setbtn1N] = useState("");
   var [btn2N, setbtn2N] = useState("");
   var [btn3N, setbtn3N] = useState("");
@@ -57,8 +70,7 @@ function App() {
   var [btn9N, setbtn9N] = useState("");
   var [btn10N, setbtn10N] = useState("");
 
-  //Button
-
+  //For storing Letter
   var [Letter1, setLetter1] = useState("");
   var [Letter2, setLetter2] = useState("");
   var [Letter3, setLetter3] = useState("");
@@ -70,19 +82,17 @@ function App() {
   var [Letter9, setLetter9] = useState("");
   var [Letter10, setLetter10] = useState("");
 
-  var [Color1, setColor1] = useState("white");
-  var [Color2, setColor2] = useState("white");
-  var [Color3, setColor3] = useState("white");
-  var [Color4, setColor4] = useState("white");
-  var [Color5, setColor5] = useState("white");
-  var [Color6, setColor6] = useState("white");
-  var [Color7, setColor7] = useState("white");
-  var [Color8, setColor8] = useState("white");
-  var [Color9, setColor9] = useState("white");
-  var [Color10, setColor10] = useState("white");
-
-  var W = "white";
-  var B = "black";
+  //For storing Color
+  var [Color1, setColor1] = useState(B);
+  var [Color2, setColor2] = useState(B);
+  var [Color3, setColor3] = useState(B);
+  var [Color4, setColor4] = useState(B);
+  var [Color5, setColor5] = useState(B);
+  var [Color6, setColor6] = useState(B);
+  var [Color7, setColor7] = useState(B);
+  var [Color8, setColor8] = useState(B);
+  var [Color9, setColor9] = useState(B);
+  var [Color10, setColor10] = useState(B);
 
   var [source_x, setSourcex] = useState(0);
   var [source_y, setSourcey] = useState(0);
@@ -110,18 +120,17 @@ function App() {
   var [order1, setorder1] = useState("s");
   var [order2, setorder2] = useState("d");
 
-  //half-position
-
-  var [half1x, sethalf1x] = useState("95vw");
-  var [half1y, sethalf1y] = useState("90vh");
+  //half-position- start
+  var [half1x, sethalf1x] = useState("95.5vw");
+  var [half1y, sethalf1y] = useState("93vh");
   var [half1z, sethalf1z] = useState("1");
 
-  var [half2x, sethalf2x] = useState("95vw");
-  var [half2y, sethalf2y] = useState("90vh");
+  var [half2x, sethalf2x] = useState("95.5vw");
+  var [half2y, sethalf2y] = useState("93vh");
   var [half2z, sethalf2z] = useState("1");
 
-  var [half3x, sethalf3x] = useState("95vw");
-  var [half3y, sethalf3y] = useState("90vh");
+  var [half3x, sethalf3x] = useState("95.5vw");
+  var [half3y, sethalf3y] = useState("93vh");
   var [half3z, sethalf3z] = useState("1");
 
   var [half1xN, sethalf1xN] = useState("");
@@ -140,13 +149,15 @@ function App() {
   var H2 = useRef(null);
   var H3 = useRef(null);
 
+  //half-position- end
+
   var numberOfCubes = 10;
 
   function init_connection() {
 
     var ros = new window.ROSLIB.Ros({
-      url: 'ws://141.44.50.126:9090'
-      // url: 'ws://localhost:9090'
+      // url: 'ws://141.44.50.126:9090'
+      url: 'ws://localhost:9090'
     });
 
     ros.on('connection', function () {
@@ -162,8 +173,8 @@ function App() {
 
       setTimeout(() => {
         try {
-          ros.connect(`ws://141.44.50.126:9090`);
-          // ros.connect(`ws://localhost:9090`);                                   
+          // ros.connect(`ws://141.44.50.126:9090`);
+          ros.connect(`ws://localhost:9090`);
 
         }
         catch (error) {
@@ -190,30 +201,38 @@ function App() {
       var gripperCounter = 0;
       var handCounter = 0;
 
-      let tempVariableX;
-      tempVariableX = [...xval];
-
-      let tempVariableY;
-      tempVariableY = [...yval];
-
-      let tempVariableZ;
-      tempVariableZ = [...zval];
-
-      let tempVariableXN;
-      tempVariableXN = [...xvalN];
-
-      let tempVariableYN;
-      tempVariableYN = [...yvalN];
-
-      let tempVariableZN;
-      tempVariableZN = [...zvalN];
-
       var halfPositionCounter = 1;
       var halfPositionCounterReset = 1;
 
 
-      //do reset button color & letter
+      //Reset button color,letter and positions
+      for (var t = 0; t < numberOfCubes; t++) {
+        var tempLetterReset = eval("setLetter" + (t + 1));
+        tempLetterReset("");
 
+        var tempColorReset = eval("setColor" + (t + 1));
+        tempColorReset(B);
+
+        tempVariableXN[t + 1] = 0;
+        setXvalN(tempVariableXN);
+
+        tempVariableYN[t + 1] = 0;
+        setYvalN(tempVariableYN);
+
+        tempVariableZN[t + 1] = 1;
+        setZvalN(tempVariableZN);
+
+        tempVariableX[t + 1] = "94.5vw";
+        setXval(tempVariableX);
+
+        tempVariableY[t + 1] = "91vh";
+        setYval(tempVariableY);
+
+        tempVariableZ[t + 1] = "1";
+        setZval(tempVariableZ);
+      }
+
+      //To position Buttons
       for (var i = 0; i < message.CubeStatus.length; i++) {
 
         //gripper
@@ -223,7 +242,9 @@ function App() {
           tempVariableX[i + 1] = `${gripCount}vw`;
           setXval(tempVariableX);
 
-          tempVariableY[i + 1] = "72vh";
+          var gripperPosition = mainHeight * (numberOfRows + 1);
+
+          tempVariableY[i + 1] = gripperPosition + "vh";
           setYval(tempVariableY);
 
           var color = message.CubeStatus[i].color;
@@ -231,6 +252,10 @@ function App() {
 
           var tempLetter = eval("setLetter" + (i + 1));
           tempLetter(letter);
+
+          var tempColor = eval("setColor" + (i + 1));
+          var tempColorValue = color == "W" ? W : B;
+          tempColor(tempColorValue);
 
           tempVariableXN[i + 1] = 0;
           setXvalN(tempVariableXN);
@@ -256,7 +281,9 @@ function App() {
           tempVariableX[i + 1] = `${handCount}vw`;
           setXval(tempVariableX);
 
-          tempVariableY[i + 1] = "63vh";
+          var handPosition = mainHeight * numberOfRows;
+
+          tempVariableY[i + 1] = handPosition + "vh";
           setYval(tempVariableY);
 
           var color = message.CubeStatus[i].color;
@@ -346,6 +373,7 @@ function App() {
 
       }
 
+      //To position half positions
       for (var i = 0; i < 3; i++) {
 
         var hx = message.HalfSpaces[i].x;
@@ -360,8 +388,8 @@ function App() {
         tyN(hy);
         tzN(hz);
 
-        var htempx = (hx - 1) * mainWidth+(mainWidth/4);
-        var htempy = (hy - 1) * mainHeight+(mainHeight/4);
+        var htempx = (hx - 1) * mainWidth + (mainWidth / 4);
+        var htempy = (hy - 1) * mainHeight + (mainHeight / 4);
         var htempz = (hz * 10) + 5;
 
         var htempx2 = `${htempx}vw`
@@ -383,24 +411,23 @@ function App() {
       //half-end
     });
 
-
-    // Subscribing to the topic
-    var listener2 = new window.ROSLIB.Topic({
+    // To show status screen
+    var statusListener = new window.ROSLIB.Topic({
       ros: ros,
       name: '/robotanswer',
       messageType: 'std_msgs/Int8'
     });
 
-    listener2.subscribe((message2) => {
-      var currentStatus = message2.data;
+    statusListener.subscribe((statusMessage) => {
+      var currentStatus = statusMessage.data;
 
-      if(currentStatus==1){
+      if (currentStatus == 1) {
         setIsLoading(true);
       }
-      else if(currentStatus==2){
+      else if (currentStatus == 2) {
         setIsLoading(false);
       }
-      
+
     });
   }
 
@@ -540,7 +567,6 @@ function App() {
       setSourcey(y);
       setSourcez(z);
       setSourcet(tempID);
-
       setorder1(order2);
       setorder2("s");
     }
@@ -548,10 +574,9 @@ function App() {
 
       setDestinationx(x);
       setDestinationy(y);
-      setDestinationz(z+1);
+      setDestinationz(z + 1);
       setDestinationt(tempID);
       setVariable(false);
-
       setorder1(order2);
       setorder2("d");
 
@@ -562,19 +587,18 @@ function App() {
 
     if (loopVariable == true) {
 
-     // console.log(event.currentTarget.id);
+      // console.log(event.currentTarget.id);
 
       var tempID = event.currentTarget.id;
       if (tempID == "hand") {
+
         setDestinationx(0);
         setDestinationy(0);
         setDestinationz(99);
         setDestinationt(tempID);
         setVariable(false);
-
         setorder1(order2);
         setorder2("d");
-
       }
       else if (tempID == "gripper") {
 
@@ -583,21 +607,15 @@ function App() {
         setDestinationz(-1);
         setDestinationt(tempID);
         setVariable(false);
-
         setorder1(order2);
         setorder2("d");
-
       }
-
-
     }
-
-
   }
 
   const pressTile = event => {
 
-   // console.log(event.currentTarget.id);
+    // console.log(event.currentTarget.id);
 
     if (loopVariable == true) {
 
@@ -608,33 +626,14 @@ function App() {
       var x = parseInt(output_d[0]);
       var y = parseInt(output_d[1]);
 
-      if (loopVariable == false) {
-
-        setVariable(true);
-        setSourcex(x);
-        setSourcey(y);
-        setSourcez(1);
-        setSourcet(tempID);
-
-        setorder1(order2);
-        setorder2("s");
-
-      }
-
-      else {
-
-        setDestinationx(x);
-        setDestinationy(y);
-        setDestinationz(1);
-        setDestinationt(tempID);
-        setVariable(false);
-
-        setorder1(order2);
-        setorder2("d");
-
-      }
+      setDestinationx(x);
+      setDestinationy(y);
+      setDestinationz(1);
+      setDestinationt(tempID);
+      setVariable(false);
+      setorder1(order2);
+      setorder2("d");
     }
-
   }
 
   const pressHalfPosition = event => {
@@ -651,27 +650,15 @@ function App() {
       var hpy = eval("half" + hOutput_d + "yN");
       var hpz = eval("half" + hOutput_d + "zN");
 
-      if (loopVariable == false) {
-        setVariable(true);
-        setSourcex(hpx);
-        setSourcey(hpy);
-        setSourcez(hpz);
-        setSourcet(htempID);
-        setorder1(order2);
-        setorder2("s");
-      }
-      else {
-        setDestinationx(hpx);
-        setDestinationy(hpy);
-        setDestinationz(hpz);
-        setDestinationt(htempID);
-        setVariable(false);
-        setorder1(order2);
-        setorder2("d");
+      setDestinationx(hpx);
+      setDestinationy(hpy);
+      setDestinationz(hpz);
+      setDestinationt(htempID);
+      setVariable(false);
+      setorder1(order2);
+      setorder2("d");
 
-      }
     }
-
   }
 
   function publish() {
@@ -722,14 +709,12 @@ function App() {
         des_color = "";
 
       }
-
     }
-
     //console.log("gotit " + sor_letter + " " + sor_color + " " + des_letter + " " + des_color);
 
     var ros = new window.ROSLIB.Ros({
-      url: 'ws://141.44.50.126:9090'
-      // url: 'ws://localhost:9090'
+      // url: 'ws://141.44.50.126:9090'
+      url: 'ws://localhost:9090'
     });
 
     var publisher = new window.ROSLIB.Topic({
@@ -762,6 +747,7 @@ function App() {
     }
 
     //Reset source and destination 
+
     Decolor();
 
     setSourcex(0);
@@ -773,9 +759,7 @@ function App() {
     setDestinationy(0);
     setDestinationz(0);
     setDestinationt("");
-
-
-   // setIsLoading(true);//screenfreeeze
+    // setIsLoading(true);//screenfreeeze
 
   }
 
@@ -789,13 +773,11 @@ function App() {
           <div
             key={"BT" + i + j}
             ref={tileref[i][j]}
-            id={j + "T" + i} className='Tile' style={{ display: "flex",minWidth: mainWidth+"vw", maxWidth: mainWidth+"vw", minHeight: mainHeight+"vh",maxHeight: mainHeight+"vh", zIndex: "0", background: 'cadetblue', borderRadius: "5px" }}
+            id={j + "T" + i} className='Tile' style={{ display: "flex", minWidth: mainWidth + "vw", maxWidth: mainWidth + "vw", minHeight: mainHeight + "vh", maxHeight: mainHeight + "vh", zIndex: "0", background: 'cadetblue', borderRadius: "5px" }}
             onClick={pressTile}>
-
           </div>
         )
       }
-
     }
     return content;
   }
@@ -819,9 +801,8 @@ function App() {
             id={"B" + i}
             onClick={pressButton}
             ref={ButtonRef}
-            variant='text' style={{ alignSelf: 'center', maxWidth: mainWidth+"vw", maxHeight: mainHeight+"vh", minHeight: mainHeight+"vh", minWidth: mainWidth+"vw", background: Color == W ? B : W, outline: ColorOutline }}
+            variant='text' style={{ alignSelf: 'center', maxWidth: mainWidth + "vw", maxHeight: mainHeight + "vh", minHeight: mainHeight + "vh", minWidth: mainWidth + "vw", background: Color == W ? B : W, outline: ColorOutline }}
           ><div style={{ fontSize: '3rem', color: Color }}>{Letter}</div></Button>
-
         </div>
       )
     }
@@ -841,17 +822,14 @@ function App() {
       var HalfRef = eval("H" + i);
 
       content.push(
-
         <div key={"H" + i} style={{ position: 'absolute', left: xValue, top: yValue, zIndex: zValue }}>
           <Button
             id={"H" + i}
             ref={HalfRef}
             onClick={pressHalfPosition}
-            variant='text' style={{ maxWidth: (mainWidth/2)+"vw", maxHeight: (mainHeight/2)+"vh", minHeight: (mainHeight/2)+"vh", minWidth: (mainWidth/2)+"vw", border: '1px solid lightgrey' }}
+            variant='text' style={{ maxWidth: (mainWidth / 2) + "vw", maxHeight: (mainHeight / 2) + "vh", minHeight: (mainHeight / 2) + "vh", minWidth: (mainWidth / 2) + "vw", border: '1px solid lightgrey' }}
           >HP{i}</Button>
         </div>
-
-
       )
     }
     return content;
@@ -879,7 +857,6 @@ function App() {
           <div className='modal-text'>Robot is moving please wait...</div>
         </div>
       </div>
-
 
       {/* Screen freeze test-end */}
 
@@ -909,7 +886,6 @@ function App() {
         <BackgroundTile num="7"></BackgroundTile>
       </div>
 
-
       {/* Hand and gripper */}
 
       <div className='BottomRow'>
@@ -917,7 +893,7 @@ function App() {
           id="hand"
           onClick={pressHandOrGripper}
           ref={handRef}
-          variant='text' style={{ maxWidth: mainWidth+"vw", maxHeight: mainHeight+"vh", minHeight: mainHeight+"vh", minWidth: mainWidth+"vw", outline: '1px solid lightgrey' }}
+          variant='text' style={{ maxWidth: mainWidth + "vw", maxHeight: mainHeight + "vh", minHeight: mainHeight + "vh", minWidth: mainWidth + "vw", outline: '1px solid lightgrey' }}
           startIcon={<Avatar sx={{ maxWidth: '100%', width: '80%', height: '80%', borderRadius: 0, marginLeft: '0%' }} src={"./hand.png"} />}></Button>
       </div>
 
@@ -926,28 +902,24 @@ function App() {
           id="gripper"
           onClick={pressHandOrGripper}
           ref={gripperRef}
-          variant='text' style={{ maxWidth: mainWidth+"vw", maxHeight: mainHeight+"vh", minHeight: mainHeight+"vh", minWidth: mainWidth+"vw", outline: '1px solid lightgrey' }}
+          variant='text' style={{ maxWidth: mainWidth + "vw", maxHeight: mainHeight + "vh", minHeight: mainHeight + "vh", minWidth: mainWidth + "vw", outline: '1px solid lightgrey' }}
           startIcon={<Avatar sx={{ maxWidth: '100%', width: '80%', height: '80%', borderRadius: 0, marginLeft: '0%' }} src={"./gripper.png"} />}></Button>
       </div>
 
       {/* Hand and gripper */}
 
-
       {/* Move button and Status tab */}
 
       <div className="moveButtonAndStatusTab">
-      <Button
-        onClick={publish}
-        variant='text' style={{ maxWidth: (mainWidth*2)+"vw", maxHeight:  mainHeight+"vh", minHeight:  mainHeight+"vh", minWidth: (mainWidth*2)+"vw", border: '1px solid lightgrey', background: "lightblue" , fontSize: "0.8vw"}}
-      >MOVE THE CUBE!!</Button>
+        <Button
+          onClick={publish}
+          variant='text' style={{ maxWidth: (mainWidth * 2) + "vw", maxHeight: mainHeight + "vh", minHeight: mainHeight + "vh", minWidth: (mainWidth * 2) + "vw", border: '1px solid lightblue', background: "lightblue", fontSize: "0.8vw" }}
+        >MOVE THE CUBE!!</Button>
 
-      <h1 style={{ color: "black", fontSize: "1.5rem", display: "inline" }}>  {loopVariable ? 'Press Destination Position' : 'Press source position'}</h1>
+        <h1 style={{ color: "black", fontSize: "1.5rem", display: "inline" }}>  {loopVariable ? 'Press Destination Position' : 'Press source position'}</h1>
       </div>
 
       {/* Move button and Status tab */}
-
-
-
 
       {/* <div style={{ position: 'absolute', left: half1x, top: half1y, zIndex: "2" }}>
         <Button
@@ -958,7 +930,6 @@ function App() {
       </div> */}
 
       <HalfPosition num="3"></HalfPosition>
-
 
       {/* <Button
         variant='text' style={{ maxWidth: '5vw', maxHeight: '10vh', minHeight: '10vh', minWidth: '5vw', border: '1px solid lightgrey', background: loopVariable ? 'black' : 'white' }}
