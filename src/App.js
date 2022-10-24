@@ -156,8 +156,8 @@ function App() {
   function init_connection() {
 
     var ros = new window.ROSLIB.Ros({
-      // url: 'ws://141.44.50.126:9090'
-      url: 'ws://localhost:9090'
+      url: 'ws://141.44.50.126:9090'
+      // url: 'ws://localhost:9090'
     });
 
     ros.on('connection', function () {
@@ -173,8 +173,8 @@ function App() {
 
       setTimeout(() => {
         try {
-          // ros.connect(`ws://141.44.50.126:9090`);
-          ros.connect(`ws://localhost:9090`);
+          ros.connect(`ws://141.44.50.126:9090`);
+          // ros.connect(`ws://localhost:9090`);
 
         }
         catch (error) {
@@ -183,6 +183,8 @@ function App() {
 
       }, 1000);
     });
+
+    
 
     // Subscribing to the topic
     var listener = new window.ROSLIB.Topic({
@@ -434,7 +436,7 @@ function App() {
 
   useEffect(
     () => {
-      init_connection();
+      init_connection(); 
     }, []
   )
 
@@ -444,6 +446,31 @@ function App() {
       Color();
     }
   )
+
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     publishHeartbeat();
+  //   }, 2000);
+  
+  //   return () => clearInterval(interval);
+
+  // }, []);
+
+    useEffect(() => {
+    
+
+    publishHeartbeat();
+
+  }, []);
+
+  useEffect(() => {
+
+    const timer = setTimeout(() => {
+      publishRefresh();
+    }, 3000);
+    return () => clearTimeout(timer);
+
+  }, []);
 
   //color-start
 
@@ -661,6 +688,49 @@ function App() {
     }
   }
 
+  function publishHeartbeat() {
+    var ros = new window.ROSLIB.Ros({
+      url: 'ws://141.44.50.126:9090'
+    });
+
+    var publisher = new window.ROSLIB.Topic({
+      ros: ros,
+      name: '/Heartbeat',
+      messageType: 'std_msgs/String'
+    });
+
+    var message = new window.ROSLIB.Message({
+     data:"/Touch_UI_rosbridge"
+    });
+
+    setInterval(() => {
+      publisher.publish(message);
+      console.log("heartbeat called");
+    }, 2000);
+
+
+    
+  }
+
+  function publishRefresh() {
+    var ros = new window.ROSLIB.Ros({
+      url: 'ws://141.44.50.126:9090'
+    });
+
+    var publisher = new window.ROSLIB.Topic({
+      ros: ros,
+      name: 'WS1/commands',
+      messageType: 'std_msgs/String'
+    });
+
+    var message = new window.ROSLIB.Message({
+     data:"Refresh"
+    });
+
+    publisher.publish(message);
+    console.log("Refresh published");
+  }
+
   function publish() {
 
     // console.log("source: " + source_x + " " + source_y + " " + source_z + " " + source_t);
@@ -713,8 +783,8 @@ function App() {
     //console.log("gotit " + sor_letter + " " + sor_color + " " + des_letter + " " + des_color);
 
     var ros = new window.ROSLIB.Ros({
-      // url: 'ws://141.44.50.126:9090'
-      url: 'ws://localhost:9090'
+      url: 'ws://141.44.50.126:9090'
+      // url: 'ws://localhost:9090'
     });
 
     var publisher = new window.ROSLIB.Topic({
@@ -741,7 +811,6 @@ function App() {
           z: destination_z
         }
       });
-
       publisher.publish(message);
 
     }
@@ -760,6 +829,12 @@ function App() {
     setDestinationz(0);
     setDestinationt("");
     // setIsLoading(true);//screenfreeeze
+
+    
+
+
+    
+
 
   }
 
