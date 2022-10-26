@@ -50,13 +50,13 @@ function App() {
   let tempVariableX, tempVariableY, tempVariableZ;
   let tempVariableXN, tempVariableYN, tempVariableZN;
 
-  tempVariableX = [...xval];
-  tempVariableY = [...yval];
-  tempVariableZ = [...zval];
+  // tempVariableX = [...xval];
+  // tempVariableY = [...yval];
+  // tempVariableZ = [...zval];
 
-  tempVariableXN = [...xvalN];
-  tempVariableYN = [...yvalN];
-  tempVariableZN = [...zvalN];
+  // tempVariableXN = [...xvalN];
+  // tempVariableYN = [...yvalN];
+  // tempVariableZN = [...zvalN];
 
   //For storing Letter and Alphabet of the cubes together
   var [btn1N, setbtn1N] = useState("");
@@ -155,10 +155,10 @@ function App() {
 
   var ros = useMemo(() => {
     return new window.ROSLIB.Ros({
-    url: 'ws://141.44.50.126:9090'
-    // url: 'ws://localhost:9090'
+      url: 'ws://141.44.50.126:9090'
+      // url: 'ws://localhost:9090'
     })
-    }, []);
+  }, []);
 
   function init_connection() {
 
@@ -191,7 +191,7 @@ function App() {
       }, 1000);
     });
 
-    
+
 
     // Subscribing to the topic
     var listener = new window.ROSLIB.Topic({
@@ -212,6 +212,15 @@ function App() {
 
       var halfPositionCounter = 1;
       var halfPositionCounterReset = 1;
+
+
+      tempVariableX = [...xval];
+      tempVariableY = [...yval];
+      tempVariableZ = [...zval];
+
+      tempVariableXN = [...xvalN];
+      tempVariableYN = [...yvalN];
+      tempVariableZN = [...zvalN];
 
 
       //Reset button color,letter and positions
@@ -443,7 +452,7 @@ function App() {
 
   useEffect(
     () => {
-      init_connection(); 
+      init_connection();
     }, []
   )
 
@@ -458,13 +467,13 @@ function App() {
   //   const interval = setInterval(() => {
   //     publishHeartbeat();
   //   }, 2000);
-  
+
   //   return () => clearInterval(interval);
 
   // }, []);
 
-    useEffect(() => {
-    
+  useEffect(() => {
+
 
     publishHeartbeat();
 
@@ -707,7 +716,7 @@ function App() {
     });
 
     var message = new window.ROSLIB.Message({
-     data:"/Touch_UI_rosbridge"
+      data: "/Touch_UI_rosbridge"
     });
 
     setInterval(() => {
@@ -716,7 +725,7 @@ function App() {
     }, 2000);
 
 
-    
+
   }
 
   function publishRefresh() {
@@ -731,7 +740,7 @@ function App() {
     });
 
     var message = new window.ROSLIB.Message({
-     data:"Refresh"
+      data: "Refresh"
     });
 
     publisher.publish(message);
@@ -837,10 +846,10 @@ function App() {
     setDestinationt("");
     // setIsLoading(true);//screenfreeeze
 
-    
 
 
-    
+
+
 
 
   }
@@ -884,7 +893,7 @@ function App() {
             onClick={pressButton}
             ref={ButtonRef}
             variant='text' style={{ alignSelf: 'center', maxWidth: mainWidth + "vw", maxHeight: mainHeight + "vh", minHeight: mainHeight + "vh", minWidth: mainWidth + "vw", background: Color == W ? B : W, outline: ColorOutline }}
-          ><div style={{ fontSize: '3rem', color: Color }}>{Letter}</div></Button>
+          ><div style={{ fontSize: '2rem', color: Color }}>{Letter}</div></Button>
         </div>
       )
     }
