@@ -1,6 +1,6 @@
 import './App.css';
 import { Button, Avatar } from '@mui/material'
-import { useEffect, useRef, createRef, useState } from 'react';
+import { useEffect, useRef, createRef, useState, useMemo } from 'react';
 
 
 //gripper-0,0,-1   hand-0,0,99
@@ -153,12 +153,19 @@ function App() {
 
   var numberOfCubes = 10;
 
+  var ros = useMemo(() => {
+    return new window.ROSLIB.Ros({
+    url: 'ws://141.44.50.126:9090'
+    // url: 'ws://localhost:9090'
+    })
+    }, []);
+
   function init_connection() {
 
-    var ros = new window.ROSLIB.Ros({
-      url: 'ws://141.44.50.126:9090'
-      // url: 'ws://localhost:9090'
-    });
+    // var ros = new window.ROSLIB.Ros({
+    //   url: 'ws://141.44.50.126:9090'
+    //   // url: 'ws://localhost:9090'
+    // });
 
     ros.on('connection', function () {
       console.log('Connected to websocket server.');
@@ -689,9 +696,9 @@ function App() {
   }
 
   function publishHeartbeat() {
-    var ros = new window.ROSLIB.Ros({
-      url: 'ws://141.44.50.126:9090'
-    });
+    // var ros = new window.ROSLIB.Ros({
+    //   url: 'ws://141.44.50.126:9090'
+    // });
 
     var publisher = new window.ROSLIB.Topic({
       ros: ros,
@@ -713,9 +720,9 @@ function App() {
   }
 
   function publishRefresh() {
-    var ros = new window.ROSLIB.Ros({
-      url: 'ws://141.44.50.126:9090'
-    });
+    // var ros = new window.ROSLIB.Ros({
+    //   url: 'ws://141.44.50.126:9090'
+    // });
 
     var publisher = new window.ROSLIB.Topic({
       ros: ros,
@@ -782,10 +789,10 @@ function App() {
     }
     //console.log("gotit " + sor_letter + " " + sor_color + " " + des_letter + " " + des_color);
 
-    var ros = new window.ROSLIB.Ros({
-      url: 'ws://141.44.50.126:9090'
-      // url: 'ws://localhost:9090'
-    });
+    // var ros = new window.ROSLIB.Ros({
+    //   url: 'ws://141.44.50.126:9090'
+    //   // url: 'ws://localhost:9090'
+    // });
 
     var publisher = new window.ROSLIB.Topic({
       ros: ros,
