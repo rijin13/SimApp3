@@ -1,6 +1,7 @@
 import './App.css';
-import { Button, Avatar } from '@mui/material'
+import { Button, Avatar,Alert } from '@mui/material'
 import { useEffect, useRef, createRef, useState, useMemo } from 'react';
+
 
 
 //gripper-0,0,-1   hand-0,0,99
@@ -49,14 +50,6 @@ function App() {
 
   let tempVariableX, tempVariableY, tempVariableZ;
   let tempVariableXN, tempVariableYN, tempVariableZN;
-
-  // tempVariableX = [...xval];
-  // tempVariableY = [...yval];
-  // tempVariableZ = [...zval];
-
-  // tempVariableXN = [...xvalN];
-  // tempVariableYN = [...yvalN];
-  // tempVariableZN = [...zvalN];
 
   //For storing Letter and Alphabet of the cubes together
   var [btn1N, setbtn1N] = useState("");
@@ -121,77 +114,55 @@ function App() {
   var [order2, setorder2] = useState("d");
 
   //half-position- start
-  var [half1x, sethalf1x] = useState("95.5vw");
-  var [half1y, sethalf1y] = useState("93vh");
-  var [half1z, sethalf1z] = useState("1");
-
-  var [half2x, sethalf2x] = useState("95.5vw");
-  var [half2y, sethalf2y] = useState("93vh");
-  var [half2z, sethalf2z] = useState("1");
-
-  var [half3x, sethalf3x] = useState("95.5vw");
-  var [half3y, sethalf3y] = useState("93vh");
-  var [half3z, sethalf3z] = useState("1");
-
-  var [half1xN, sethalf1xN] = useState("");
-  var [half1yN, sethalf1yN] = useState("");
-  var [half1zN, sethalf1zN] = useState("");
-
-  var [half2xN, sethalf2xN] = useState("");
-  var [half2yN, sethalf2yN] = useState("");
-  var [half2zN, sethalf2zN] = useState("");
-
-  var [half3xN, sethalf3xN] = useState("");
-  var [half3yN, sethalf3yN] = useState("");
-  var [half3zN, sethalf3zN] = useState("");
-
   var H1 = useRef(null);
   var H2 = useRef(null);
   var H3 = useRef(null);
+  var H4 = useRef(null);
+  var H5 = useRef(null);
+  var H6 = useRef(null);
+  var H7 = useRef(null);
+  var H8 = useRef(null);
+  var H9 = useRef(null);
+  var H10 = useRef(null);
+
+  //For storing x,y,z values of the half positions after conversion
+  const [halfXval, sethalfXval] = useState(new Array(11).fill("95.5vw"));
+  const [halfYval, sethalfYval] = useState(new Array(11).fill("93vh"));
+  const [halfZval, sethalfZval] = useState(new Array(11).fill("1"));
+
+  //For storing x,y,z values of the half positions(N-normal)
+  const [halfXvalN, sethalfXvalN] = useState(new Array(11).fill(0));
+  const [halfYvalN, sethalfYvalN] = useState(new Array(11).fill(0));
+  const [halfZvalN, sethalfZvalN] = useState(new Array(11).fill(1));
+
+  let halfTempVariableX, halfTempVariableY, halfTempVariableZ;
+  let halfTempVariableXN, halfTempVariableYN, halfTempVariableZN;
 
   //half-position- end
 
   var numberOfCubes = 10;
+  var numberOfHalfPositions = 10;
+
+  // var ros = useMemo(() => {
+  //   return new window.ROSLIB.Ros({
+  //     url: 'ws://141.44.50.126:9090'
+  //     // url: 'ws://localhost:9090'
+  //   })
+  // }, []);
 
   var ros = useMemo(() => {
     return new window.ROSLIB.Ros({
-      url: 'ws://141.44.50.126:9090'
-      // url: 'ws://localhost:9090'
+      url: ''
     })
   }, []);
 
-  function init_connection() {
+  //var connectionName = "ws://localhost:9090";
+   var connectionName ="ws://141.44.50.126:9090";
 
-    // var ros = new window.ROSLIB.Ros({
-    //   url: 'ws://141.44.50.126:9090'
-    //   // url: 'ws://localhost:9090'
-    // });
+  var [connection, setConnection] = useState(false);
+  var [messageReceived, setMessageReceived] = useState(false);
 
-    ros.on('connection', function () {
-      console.log('Connected to websocket server.');
-    });
-
-    ros.on('error', function (error) {
-      console.log('Connected to websocket server.', error);
-    });
-
-    ros.on('close', function () {
-      console.log('Connection to websocket server closed.');
-
-      setTimeout(() => {
-        try {
-          ros.connect(`ws://141.44.50.126:9090`);
-          // ros.connect(`ws://localhost:9090`);
-
-        }
-        catch (error) {
-          console.log("connection problem");
-        }
-
-      }, 1000);
-    });
-
-
+  function getEnvironmentStatus() {
 
     // Subscribing to the topic
     var listener = new window.ROSLIB.Topic({
@@ -204,14 +175,18 @@ function App() {
       //console.log('Received message on ' + listener.name + ':' + JSON.stringify(message.cube[0].x));
       console.log('Received message on ' + listener.name + ':' + JSON.stringify(message));
 
+      setMessageReceived(messageReceived => !messageReceived);
+      console.log(messageReceived);
+
+
       //setIsLoading(false);//screenfreeeze
 
       //hand-gripper
       var gripperCounter = 0;
       var handCounter = 0;
 
-      var halfPositionCounter = 1;
-      var halfPositionCounterReset = 1;
+      // var halfPositionCounter = 1;
+      //  var halfPositionCounterReset = 1;
 
 
       tempVariableX = [...xval];
@@ -222,6 +197,13 @@ function App() {
       tempVariableYN = [...yvalN];
       tempVariableZN = [...zvalN];
 
+      halfTempVariableX = [...halfXval];
+      halfTempVariableY = [...halfYval];
+      halfTempVariableZ = [...halfZval];
+
+      halfTempVariableXN = [...halfXvalN];
+      halfTempVariableYN = [...halfYvalN];
+      halfTempVariableZN = [...halfZvalN];
 
       //Reset button color,letter and positions
       for (var t = 0; t < numberOfCubes; t++) {
@@ -378,58 +360,159 @@ function App() {
       //half-start
 
       //half Position reset
-      for (var i = 0; i < 3; i++) {
-        var RtxN = eval("sethalf" + halfPositionCounterReset + "x");
-        var RtyN = eval("sethalf" + halfPositionCounterReset + "y");
-        var RtzN = eval("sethalf" + halfPositionCounterReset + "z");
+      for (var h = 0; h < numberOfHalfPositions; h++) {
 
-        RtxN("95vw");
-        RtyN("90vh");
-        RtzN("1");
+        halfTempVariableXN[h + 1] = 0;
+        sethalfXvalN(halfTempVariableXN);
 
-        halfPositionCounterReset++;
+        halfTempVariableYN[h + 1] = 0;
+        sethalfYvalN(halfTempVariableYN);
 
+        halfTempVariableZN[h + 1] = 1;
+        sethalfZvalN(halfTempVariableZN);
+
+        halfTempVariableX[h + 1] = "95.5vw";
+        sethalfXval(halfTempVariableX);
+
+        halfTempVariableY[h + 1] = "91vh";
+        sethalfYval(halfTempVariableY);
+
+        halfTempVariableZ[h + 1] = "1";
+        sethalfZval(halfTempVariableZ);
       }
 
       //To position half positions
-      for (var i = 0; i < 3; i++) {
+      for (var i = 0; i < message.HalfSpaces.length; i++) {
 
         var hx = message.HalfSpaces[i].x;
         var hy = message.HalfSpaces[i].y;
         var hz = message.HalfSpaces[i].z;
 
-        var txN = eval("sethalf" + halfPositionCounter + "xN");
-        var tyN = eval("sethalf" + halfPositionCounter + "yN");
-        var tzN = eval("sethalf" + halfPositionCounter + "zN");
+        halfTempVariableXN[i + 1] = hx;
+        sethalfXvalN(halfTempVariableXN);
 
-        txN(hx);
-        tyN(hy);
-        tzN(hz);
+        halfTempVariableYN[i + 1] = hy;
+        sethalfYvalN(halfTempVariableYN);
+
+        halfTempVariableZN[i + 1] = hz;
+        sethalfZvalN(halfTempVariableZN);
 
         var htempx = (hx - 1) * mainWidth + (mainWidth / 4);
         var htempy = (hy - 1) * mainHeight + (mainHeight / 4);
         var htempz = (hz * 10) + 5;
 
-        var htempx2 = `${htempx}vw`
-        var htempy2 = `${htempy}vh`
-        var htempz2 = `${htempz}`
+        halfTempVariableX[i + 1] = `${htempx}vw`;
+        sethalfXval(halfTempVariableX);
 
-        var tx = eval("sethalf" + halfPositionCounter + "x");
-        var ty = eval("sethalf" + halfPositionCounter + "y");
+        halfTempVariableY[i + 1] = `${htempy}vh`;
+        sethalfYval(halfTempVariableY);
 
-        var tz = eval("sethalf" + halfPositionCounter + "z");
-
-        tx(htempx2);
-        ty(htempy2);
-        tz(htempz2);
-
-        halfPositionCounter++;
+        halfTempVariableZ[i + 1] = `${htempz}`;
+        sethalfZval(halfTempVariableZ);
 
       }
       //half-end
     });
 
-    // To show status screen
+    
+  }
+
+  useEffect(
+    () => {
+      if (connection) {
+        getEnvironmentStatus();
+      }
+    }, [connection]
+  )
+
+
+  useEffect(
+    () => {
+      Color();
+    }
+  )
+
+  useEffect(() => {
+
+    if (!connection) {
+      handleConnect();
+    }
+
+  }, [connection])
+
+  const handleConnect = () => {
+    try {
+      ros.connect(connectionName)
+
+      ros.on('connection', () => {
+        console.log('Connected to websocket server.');
+        setConnection(true);
+      })
+
+      ros.on('error', (error) => {
+        console.log("Connection error" + error);
+      })
+
+      ros.on('close', () => {
+        console.log('Connection to websocket server closed.');
+        setConnection(false);
+
+        setTimeout(() => {
+          try {
+            // ros.connect(`ws://141.44.50.126:9090`);
+            ros.connect(connectionName);
+
+          }
+          catch (error) {
+            console.log("connection problem");
+          }
+
+        }, 2000);
+      });
+    } catch (e) {
+      console.log("error" + e);
+    }
+  }
+
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     publishHeartbeat();
+  //   }, 2000);
+
+  //   return () => clearInterval(interval);
+
+  // }, []);
+
+  useEffect(() => {
+
+    if (connection) {
+      publishHeartbeat();
+    }
+
+  }, [connection]);
+
+  useEffect(() => {
+
+    if (connection) {
+      const timer = setTimeout(() => {
+        publishRefresh();
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+
+  }, [connection]);
+
+  useEffect(() => {
+
+    if(connection){
+      robotMovementStatus();
+    }
+    
+  }, [connection]);
+
+  // To show status screen
+  function robotMovementStatus(){
+
     var statusListener = new window.ROSLIB.Topic({
       ros: ros,
       name: '/robotanswer',
@@ -445,48 +528,9 @@ function App() {
       else if (currentStatus == 2) {
         setIsLoading(false);
       }
-
     });
+
   }
-
-
-  useEffect(
-    () => {
-      init_connection();
-    }, []
-  )
-
-
-  useEffect(
-    () => {
-      Color();
-    }
-  )
-
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     publishHeartbeat();
-  //   }, 2000);
-
-  //   return () => clearInterval(interval);
-
-  // }, []);
-
-  useEffect(() => {
-
-
-    publishHeartbeat();
-
-  }, []);
-
-  useEffect(() => {
-
-    const timer = setTimeout(() => {
-      publishRefresh();
-    }, 3000);
-    return () => clearTimeout(timer);
-
-  }, []);
 
   //color-start
 
@@ -505,7 +549,6 @@ function App() {
       destination();
       source();
     }
-
 
     function source() {
 
@@ -689,9 +732,9 @@ function App() {
 
       var hOutput_d = htempID.substring(1);
 
-      var hpx = eval("half" + hOutput_d + "xN");
-      var hpy = eval("half" + hOutput_d + "yN");
-      var hpz = eval("half" + hOutput_d + "zN");
+      var hpx = halfXvalN[hOutput_d];
+      var hpy = halfYvalN[hOutput_d];
+      var hpz = halfZvalN[hOutput_d];
 
       setDestinationx(hpx);
       setDestinationy(hpy);
@@ -847,11 +890,6 @@ function App() {
     // setIsLoading(true);//screenfreeeze
 
 
-
-
-
-
-
   }
 
   function BackgroundTile(props) {
@@ -906,14 +944,10 @@ function App() {
 
     for (var i = 1; i <= num; i++) {
 
-      var xValue = eval("half" + i + "x");
-      var yValue = eval("half" + i + "y");
-      var zValue = eval("half" + i + "z");
-
       var HalfRef = eval("H" + i);
 
       content.push(
-        <div key={"H" + i} style={{ position: 'absolute', left: xValue, top: yValue, zIndex: zValue }}>
+        <div key={"H" + i} style={{ position: 'absolute', left: halfXval[i], top: halfYval[i], zIndex: halfZval[i] }}>
           <Button
             id={"H" + i}
             ref={HalfRef}
@@ -999,7 +1033,7 @@ function App() {
 
       {/* Hand and gripper */}
 
-      {/* Move button and Status tab */}
+      {/* Move button and Status tab- start */}
 
       <div className="moveButtonAndStatusTab">
         <Button
@@ -1008,9 +1042,17 @@ function App() {
         >MOVE THE CUBE!!</Button>
 
         <h1 style={{ color: "black", fontSize: "1.5rem", display: "inline" }}>  {loopVariable ? 'Press Destination Position' : 'Press source position'}</h1>
+
+        
       </div>
 
-      {/* Move button and Status tab */}
+      {/* Move button and Status tab- end */}
+
+      {/* Connection Status- start */}
+
+      <Alert severity={connection?"success":"error"} className="connectionStatus" style={{display: "inline-block"}}>{connection?"Connected":"Disconnected"}</Alert>
+
+      {/* Connection Status- end */}
 
       {/* <div style={{ position: 'absolute', left: half1x, top: half1y, zIndex: "2" }}>
         <Button
@@ -1020,7 +1062,7 @@ function App() {
           startIcon={<Avatar sx={{ maxWidth: '100%', width: '100%', height: '100%', borderRadius: 0, marginLeft: '0%' }} src={"./blank.png"} />}>half position</Button>
       </div> */}
 
-      <HalfPosition num="3"></HalfPosition>
+      <HalfPosition num="10"></HalfPosition>
 
       {/* <Button
         variant='text' style={{ maxWidth: '5vw', maxHeight: '10vh', minHeight: '10vh', minWidth: '5vw', border: '1px solid lightgrey', background: loopVariable ? 'black' : 'white' }}
