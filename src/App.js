@@ -537,7 +537,7 @@ function App() {
 
     var statusListener = new window.ROSLIB.Topic({
       ros: ros,
-      name: '/robotanswer',
+      name: '/WS1/robotanswer',
       messageType: 'std_msgs/Int8'
     });
 
