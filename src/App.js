@@ -1,5 +1,5 @@
 import './App.css';
-import { Button, Avatar,Alert } from '@mui/material'
+import { Button, Avatar, Alert } from '@mui/material'
 import { useEffect, useRef, createRef, useState, useMemo } from 'react';
 
 
@@ -15,7 +15,7 @@ function App() {
 
   var mainWidth = 5;
   var mainHeight = 8.5;
-  var numberOfRows = 7;
+  var numberOfRows = 8;
 
   //Button
   var B1 = useRef(null);
@@ -97,13 +97,23 @@ function App() {
   var [destination_z, setDestinationz] = useState(0);
   var [destination_t, setDestinationt] = useState("");
 
+  //highlight-start
+  var [highlight_x, setHighlightx] = useState(0);
+  var [highlight_y, setHighlighty] = useState(0);
+  var [highlight_z, setHighlightz] = useState(0);
+  var [highlight_Letter, setHighlightLetter] = useState("");
+  var [highlight_Color, setHighlightColor] = useState("");
+  var [highlight_t, setHighlightt] = useState("");
+  var [notFirstTime, setNotFirstTime] = useState(false);
+  //highlight-end
+
   var tileref = [];
-  for (var i = 1; i < 8; i++) {
+  for (var i = 1; i < 10; i++) {
     var tileref1 = [];
     tileref[i] = tileref1;
   }
 
-  for (var i = 1; i < 8; i++) {
+  for (var i = 1; i < 10; i++) {
     for (var j = 1; j < 21; j++) {
       tileref[i][j] = createRef(null);
       //console.log(tileref.length);
@@ -157,7 +167,7 @@ function App() {
   }, []);
 
   //var connectionName = "ws://localhost:9090";
-   var connectionName ="ws://141.44.50.126:9090";
+  var connectionName ="ws://141.44.50.126:9090";
 
   var [connection, setConnection] = useState(false);
   var [messageReceived, setMessageReceived] = useState(false);
@@ -414,7 +424,7 @@ function App() {
       //half-end
     });
 
-    
+
   }
 
   useEffect(
@@ -504,14 +514,26 @@ function App() {
 
   useEffect(() => {
 
-    if(connection){
+    if (connection) {
       robotMovementStatus();
     }
-    
+
   }, [connection]);
 
+  useEffect(() => {
+
+    if (notFirstTime ) {
+      publishHighlight();
+    }
+
+    //if (connection) {
+      setNotFirstTime(true);
+    //}
+
+  }, [highlight_z, highlight_x,highlight_y,highlight_Letter,highlight_Color])
+
   // To show status screen
-  function robotMovementStatus(){
+  function robotMovementStatus() {
 
     var statusListener = new window.ROSLIB.Topic({
       ros: ros,
@@ -665,8 +687,14 @@ function App() {
       setVariable(false);
       setorder1(order2);
       setorder2("d");
-
     }
+
+    //Highlight
+    setHighlightx(x);
+    setHighlighty(y);
+    setHighlightz(z);
+    setHighlightt(tempID);
+
   }
 
   const pressHandOrGripper = event => {
@@ -685,6 +713,13 @@ function App() {
         setVariable(false);
         setorder1(order2);
         setorder2("d");
+
+
+        //Highlight
+        setHighlightx(0);
+        setHighlighty(0);
+        setHighlightz(99);
+        setHighlightt(tempID);
       }
       else if (tempID == "gripper") {
 
@@ -695,6 +730,13 @@ function App() {
         setVariable(false);
         setorder1(order2);
         setorder2("d");
+
+
+        //Highlight
+        setHighlightx(0);
+        setHighlighty(0);
+        setHighlightz(-1);
+        setHighlightt(tempID);
       }
     }
   }
@@ -719,6 +761,13 @@ function App() {
       setVariable(false);
       setorder1(order2);
       setorder2("d");
+
+
+      //Highlight
+      setHighlightx(x);
+      setHighlighty(y);
+      setHighlightz(1);
+      setHighlightt(tempID);
     }
   }
 
@@ -744,13 +793,16 @@ function App() {
       setorder1(order2);
       setorder2("d");
 
+
+      //Highlight
+      setHighlightx(hpx);
+      setHighlighty(hpy);
+      setHighlightz(hpz);
+      setHighlightt(htempID);
     }
   }
 
   function publishHeartbeat() {
-    // var ros = new window.ROSLIB.Ros({
-    //   url: 'ws://141.44.50.126:9090'
-    // });
 
     var publisher = new window.ROSLIB.Topic({
       ros: ros,
@@ -772,9 +824,6 @@ function App() {
   }
 
   function publishRefresh() {
-    // var ros = new window.ROSLIB.Ros({
-    //   url: 'ws://141.44.50.126:9090'
-    // });
 
     var publisher = new window.ROSLIB.Topic({
       ros: ros,
@@ -789,6 +838,66 @@ function App() {
     publisher.publish(message);
     console.log("Refresh published");
   }
+
+
+
+  function publishHighlight() {
+
+
+    var tempHighlight_t = highlight_t;
+    //console.log("boy i need you " + tempHighlight_t);
+
+    var highlightLetter;
+    var highlightColor;
+
+
+    if (tempHighlight_t != "") {
+
+      if (tempHighlight_t.indexOf("B") > -1) {
+
+      var tempHighlight_t2 = tempHighlight_t.substring(1);
+      var alphancolor = eval("btn" + tempHighlight_t2 + "N");
+      var tempalphancolor = alphancolor.split("");
+      highlightLetter = tempalphancolor[0];
+      highlightColor = tempalphancolor[1];
+      }
+      else if (tempHighlight_t.indexOf("T") > -1) {
+        highlightLetter = "";
+        highlightColor = "";
+      }
+
+      else if (tempHighlight_t == "hand" || tempHighlight_t == "gripper") {
+        highlightLetter = "";
+        highlightColor = "";
+      }
+
+      else if (tempHighlight_t.indexOf("H") > -1) {
+        highlightLetter = "";
+        highlightColor = "";
+
+      }
+
+      //console.log("hehehe "+highlightLetter+" "+highlightColor);
+    }
+
+    var publisher = new window.ROSLIB.Topic({
+      ros: ros,
+      name: '/highlight',
+      messageType: 'rosa_msgs/Cube'
+    });
+
+    var highlightMessage = new window.ROSLIB.Message({
+      letters: highlightLetter,
+      color: highlightColor,
+      x: highlight_x,
+      y: highlight_y,
+      z: highlight_z
+    });
+
+    publisher.publish(highlightMessage);
+
+  }
+
 
   function publish() {
 
@@ -1010,6 +1119,9 @@ function App() {
       <div className="Row">
         <BackgroundTile num="7"></BackgroundTile>
       </div>
+      <div className="Row">
+        <BackgroundTile num="8"></BackgroundTile>
+      </div>
 
       {/* Hand and gripper */}
 
@@ -1043,14 +1155,14 @@ function App() {
 
         <h1 style={{ color: "black", fontSize: "1.5rem", display: "inline" }}>  {loopVariable ? 'Press Destination Position' : 'Press source position'}</h1>
 
-        
+
       </div>
 
       {/* Move button and Status tab- end */}
 
       {/* Connection Status- start */}
 
-      <Alert severity={connection?"success":"error"} className="connectionStatus" style={{display: "inline-block"}}>{connection?"Connected":"Disconnected"}</Alert>
+      <Alert severity={connection ? "success" : "error"} className="connectionStatus" style={{ display: "inline-block" }}>{connection ? "Connected" : "Disconnected"}</Alert>
 
       {/* Connection Status- end */}
 
