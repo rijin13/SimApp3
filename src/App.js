@@ -882,7 +882,7 @@ function App() {
 
     var publisher = new window.ROSLIB.Topic({
       ros: ros,
-      name: '/highlight',
+      name: 'WS1/highlight',
       messageType: 'rosa_msgs/Cube'
     });
 
