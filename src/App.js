@@ -522,15 +522,15 @@ function App() {
 
   useEffect(() => {
 
-    if (notFirstTime ) {
+    if (notFirstTime && connection) {
       publishHighlight();
     }
 
-    //if (connection) {
-      setNotFirstTime(true);
-    //}
 
-  }, [highlight_z, highlight_x,highlight_y,highlight_Letter,highlight_Color])
+    setNotFirstTime(true);
+
+
+  }, [highlight_z, highlight_x, highlight_y, highlight_Letter, highlight_Color])
 
   // To show status screen
   function robotMovementStatus() {
@@ -855,11 +855,11 @@ function App() {
 
       if (tempHighlight_t.indexOf("B") > -1) {
 
-      var tempHighlight_t2 = tempHighlight_t.substring(1);
-      var alphancolor = eval("btn" + tempHighlight_t2 + "N");
-      var tempalphancolor = alphancolor.split("");
-      highlightLetter = tempalphancolor[0];
-      highlightColor = tempalphancolor[1];
+        var tempHighlight_t2 = tempHighlight_t.substring(1);
+        var alphancolor = eval("btn" + tempHighlight_t2 + "N");
+        var tempalphancolor = alphancolor.split("");
+        highlightLetter = tempalphancolor[0];
+        highlightColor = tempalphancolor[1];
       }
       else if (tempHighlight_t.indexOf("T") > -1) {
         highlightLetter = "";
@@ -882,7 +882,7 @@ function App() {
 
     var publisher = new window.ROSLIB.Topic({
       ros: ros,
-      name: '/highlight',
+      name: 'WS1/highlight',
       messageType: 'rosa_msgs/Cube'
     });
 
@@ -949,11 +949,6 @@ function App() {
       }
     }
     //console.log("gotit " + sor_letter + " " + sor_color + " " + des_letter + " " + des_color);
-
-    // var ros = new window.ROSLIB.Ros({
-    //   url: 'ws://141.44.50.126:9090'
-    //   // url: 'ws://localhost:9090'
-    // });
 
     var publisher = new window.ROSLIB.Topic({
       ros: ros,
